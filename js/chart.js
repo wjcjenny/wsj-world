@@ -24,108 +24,122 @@ var listTemplate = _.template(
 	"</div>" +
 	"<%}%>" +
 	"<hr class='linebreak'>"
+	// "<% if (photo)" +
+	// "{%><div class='row'>" +
+	// "<div class='col-md-8'><h5 class='straps'><%= strap %></h5><h4 class='headline'><a href='<%= url %>'><%= head %></a></h4><p class='authorname inline'><%= author %></p><p class='date inline'><%= date %></p><p><%= text %></p></div>" +
+	// "<div class='col-md-4'><img class='img-responsive' src='<%= photo %>'></div>" +
+	// "</div><%}" +
+	// "else if (text)" +
+	// "{%><div class='row'>" +
+	// "<div class='col-md-8'><h5 class='straps'><%= strap %></h5><h4 class='headline'><a href='<%= url %>'><%= head %></a></h4><p class='authorname inline'><%= author %></p><p class='date inline'><%= date %></p><p><%= text %></p></div>" +
+	// "</div><%}"+
+	// "else" +
+	// "{%><div class='row'>" +
+	// "<div class='col-md-8'><h5 class='straps'><%= strap %></h5><h4 class='headline'><a href='<%= url %>'><%= head %></a></h4><p class='authorname inline'><%= author %></p><p class='date inline'><%= date %></p></div>" +
+	// "</div>" +
+	// "<%}%>" +
+	// "<hr class='linebreak'>"
 );
 
-//read data 
-var wsj_world = $.getJSON( "data/wsj_world.json", function(data) {
+
+
+
+
+//main 
+var wsj_world = $.getJSON("data/wsj_world.json", function(data) {
 	
-	data.forEach( function(d){
-		var eachstrap = d.headlines
+	function doRender(type) {
+		$('#contain-wrap').html('');
 
-		var eachstory = eachstrap.forEach(function(m){
-			
-			//parse date
-			var date = new Date(m.date);
-	    	var dateToStr = date.toUTCString().split(' ');
-	    	var cleanDate = dateToStr[2] + ' ' + dateToStr[1] + ', ' + dateToStr[3];
-			
-			//find all authors
-			var author = []
-			m.authors.forEach(function(n){
-				var authorname = n.authorName;
-				author.push(authorname)
-			})
+		data.forEach(function(d) {
+			var eachstrap = d.headlines
 
-			//find image, avoid null src
-			var image = m.image;
-			if (m.image == null)
-			{
-				var count = 0;
-	            for (k in m.images){
-	            	count++;
-	            	if (count == 2)
-	            	{
-	            		image = m.images[k]
-	            		break;
-	            	}
-	            }
-			}
+			var eachstory = eachstrap.forEach(function(m) {
+				//parse date
+				var date = new Date(m.date);
+				var dateToStr = date.toUTCString().split(' ');
+				var cleanDate = dateToStr[2] + ' ' + dateToStr[1] + ', ' + dateToStr[3];
 
-
-			
-			
-			$('.english').append( 
-				listTemplate({
-					strap:m.flashline,
-					url:m.desktop_url, 
-					head: m.headline, 
-					date:cleanDate, 
-					author:author,
-					photo:image
+				//find all authors
+				var author = []
+				m.authors.forEach(function(n) {
+				  var authorname = n.authorName;
+				  //change the name of author to Martian languange, its not necessary for real use, but...just try
+				  if (type == 'martian') {
+				    author.push(authorname.doMartian());
+				  } else {
+				    author.push(authorname);
+				  }
 				})
-			)
 
-
-			//????toggle between two languages
-			$(".button-row").on("click", function(){
-				$('.button-row').removeClass('selected')
-				// console.log($(this))
-				$(this).addClass('selected')
-				var thisid = $(this).attr("dataid");
-				
-
-				if (thisid == 'english'){
-					$('.english').append( 
-						listTemplate({
-							strap:m.flashline,
-							url:m.desktop_url, 
-							head: m.headline, 
-							date:cleanDate, 
-							author:author,
-							photo:image
-						})
-					)
-				}else {
-					$('.martin').append( 
-						listTemplate({
-							strap:m.headline,
-							url:m.desktop_url, 
-							head: m.headline, 
-							date:cleanDate, 
-							author:author,
-							photo:image
-						})
-					)
+				//find image from key 'image', avoid null src, if so find the first object of key 'images'
+				var image = m.image;
+				if (m.image == null) {
+				  var count = 0;
+				  for (k in m.images) {
+				    count++;
+				    if (count == 2) {
+				      image = m.images[k]
+				      break;
+				    }
+				  }
 				}
 
+				// console.log(m.text)
+				// var summary = m.text;
+				// if(m.text == null){
+				// 	break;
+				// }
+					
+				
 
-				$('.switch-chart').removeClass("selected");
-				$('#'+thisid).addClass("selected");
+				//switch chart 
+				if (type == 'english') {
+				  $('#contain-wrap').append(
+				    listTemplate({
+				      strap: m.flashline,
+				      url: m.desktop_url,
+				      head: m.headline,
+				      date: cleanDate,
+				      author: author,
+				      photo: image
+				      // text: summary
+				    })
+				  );
+				} else {
+				  $('#contain-wrap').append(
+				    listTemplate({
+				      strap: m.flashline.doMartian(),
+				      url: m.desktop_url,
+				      head: m.headline.doMartian(),
+				      date: cleanDate,
+				      author: author,
+				      photo: image
+				      // text: summary.doMartian()
+				    })
+				  )
+				}
 
 			})
-			
-			
+		});
+	}
+
+	//render chart
+	doRender('english');
 
 
 
-
-		})
-
-		
-	})
-
-			
-
-
+	//toggle between two languages
+	$(".button-row").on("click", function() {
+		$('.button-row').removeClass('selected')
+		  // console.log($(this))
+		$(this).addClass('selected')
+		var thisid = $(this).data("lang");
+		if (thisid == 'english') {
+		  doRender('english');
+		} else {
+		  doRender('martian');
+		}
+	});
 
 });
