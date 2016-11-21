@@ -15,7 +15,7 @@ String.prototype.doMartian = function() {
 var listTemplate = _.template(
 	"<% if (photo)" +
 	"{%><div class='row'>" +
-	"<div class='col-md-8'><h5 class='straps'><%= strap %></h5><h4 class='headline'><a href='<%= url %>'><%= head %></a></h4><p class='authorname inline'><%= author %></p><p class='date inline'><%= date %></p></div>" +
+	"<div class='col-md-8'><h5 class='straps'><%= strap %></h5><h4 class='headline'><a href='<%= url %>'><%= head %></a></h4><p class='authorname inline'><%= author %></p><p class='date inline'><%= date %></p><p><%= text %></p></div>" +
 	"<div class='col-md-4'><img class='img-responsive' src='<%= photo %>'></div>" +
 	"</div><%}" +
 	"else" +
@@ -64,7 +64,7 @@ var wsj_world = $.getJSON("data/wsj_world.json", function(data) {
 				var author = []
 				m.authors.forEach(function(n) {
 				  var authorname = n.authorName;
-				  //change the name of author to Martian languange, its not necessary for real use, but...just try
+				  //change the name of author to Martian languange, its not necessary for real use, but...just try if we need
 				  if (type == 'martian') {
 				    author.push(authorname.doMartian());
 				  } else {
@@ -86,10 +86,18 @@ var wsj_world = $.getJSON("data/wsj_world.json", function(data) {
 				}
 
 				// console.log(m.text)
-				// var summary = m.text;
-				// if(m.text == null){
-				// 	break;
-				// }
+				// var summary = []
+
+				// m.text.forEach(function(t) {
+				// 	console.log(t)
+				var summary = m.text;
+					  
+				// 	// if (type == 'martian') {
+				// 	// 	return ""
+				// 	// } else {
+				// 	// 	return m.text
+				// 	// }
+				// })
 					
 				
 
@@ -102,8 +110,8 @@ var wsj_world = $.getJSON("data/wsj_world.json", function(data) {
 				      head: m.headline,
 				      date: cleanDate,
 				      author: author,
-				      photo: image
-				      // text: summary
+				      photo: image,
+				      text: summary
 				    })
 				  );
 				} else {
@@ -114,8 +122,8 @@ var wsj_world = $.getJSON("data/wsj_world.json", function(data) {
 				      head: m.headline.doMartian(),
 				      date: cleanDate,
 				      author: author,
-				      photo: image
-				      // text: summary.doMartian()
+				      photo: image,
+				      text: summary
 				    })
 				  )
 				}
