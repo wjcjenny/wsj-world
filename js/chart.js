@@ -84,49 +84,52 @@ var wsj_world = $.getJSON("data/wsj_world.json", function(data) {
 				    }
 				  }
 				}
-
-				// console.log(m.text)
-				// var summary = []
-
-				// m.text.forEach(function(t) {
-				// 	console.log(t)
-				var summary = m.text;
-					  
-				// 	// if (type == 'martian') {
-				// 	// 	return ""
-				// 	// } else {
-				// 	// 	return m.text
-				// 	// }
-				// })
-					
-				
+  
+			
 
 				//switch chart 
 				if (type == 'english') {
-				  $('#contain-wrap').append(
-				    listTemplate({
-				      strap: m.flashline,
-				      url: m.desktop_url,
-				      head: m.headline,
-				      date: cleanDate,
-				      author: author,
-				      photo: image,
-				      text: summary
-				    })
-				  );
+					$('#contain-wrap').append(
+						listTemplate({
+							strap: m.flashline,
+							url: m.desktop_url,
+							head: m.headline,
+							date: cleanDate,
+							author: author,
+							photo: image,
+							text: m.text
+						})
+				  	);
 				} else {
-				  $('#contain-wrap').append(
-				    listTemplate({
-				      strap: m.flashline.doMartian(),
-				      url: m.desktop_url,
-				      head: m.headline.doMartian(),
-				      date: cleanDate,
-				      author: author,
-				      photo: image,
-				      text: summary
-				    })
-				  )
+					if(m.text == null){
+						$('#contain-wrap').append(
+							listTemplate({
+								strap: m.flashline.doMartian(),
+								url: m.desktop_url,
+								head: m.headline.doMartian(),
+								date: cleanDate,
+								author: author,
+								photo: image,
+								text: m.text
+							})
+						);
+				} else {
+					$('#contain-wrap').append(
+						listTemplate({
+							strap: m.flashline.doMartian(),
+							url: m.desktop_url,
+							head: m.headline.doMartian(),
+							date: cleanDate,
+							author: author,
+							photo: image,
+							text: m.text.doMartian()
+						})
+					)
 				}
+				
+				}
+
+
 
 			})
 		});
