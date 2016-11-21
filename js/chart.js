@@ -1,29 +1,32 @@
 //split and replace with boinga
-String.prototype.allReplace = function(){
-	var str = this;
-	var txt = str.split(",");
-	return str;
-
+String.prototype.doMartian = function() {
+    var str = this.split(' ');
+    var txt = '';
+    str.forEach(function(item) {
+      item = item.length > 3 ? 'boinga' : item;
+      txt += ' ' + item;
+    });
+    txt = txt.trim();
+    return txt;
 }
 
 
 //template for each story in main language
 var listTemplate = _.template(
 	"<% if (photo)" +
-	"{%><div class='row'>"+
-		"<div class='col-md-8'><h5 class='straps'><%= strap %></h5><h4 class='headline'><a href='<%= url %>'><%= head %></a></h4><p class='authorname inline'><%= author %></p><p class='date inline'><%= date %></p></div>"+ 
-		"<div class='col-md-4'><img class='img-responsive' src='<%= photo %>'></div>"+
-	  "</div><%}"+
+	"{%><div class='row'>" +
+	"<div class='col-md-8'><h5 class='straps'><%= strap %></h5><h4 class='headline'><a href='<%= url %>'><%= head %></a></h4><p class='authorname inline'><%= author %></p><p class='date inline'><%= date %></p></div>" +
+	"<div class='col-md-4'><img class='img-responsive' src='<%= photo %>'></div>" +
+	"</div><%}" +
 	"else" +
-	"{%><div class='row'>"+
-		"<div class='col-md-8'><h5 class='straps'><%= strap %></h5><h4 class='headline'><a href='<%= url %>'><%= head %></a></h4><p class='authorname inline'><%= author %></p><p class='date inline'><%= date %></p></div>"+
-		"</div>"+
-	"<%}%>"+
+	"{%><div class='row'>" +
+	"<div class='col-md-8'><h5 class='straps'><%= strap %></h5><h4 class='headline'><a href='<%= url %>'><%= head %></a></h4><p class='authorname inline'><%= author %></p><p class='date inline'><%= date %></p></div>" +
+	"</div>" +
+	"<%}%>" +
 	"<hr class='linebreak'>"
-
 );
 
-
+//read data 
 var wsj_world = $.getJSON( "data/wsj_world.json", function(data) {
 	
 	data.forEach( function(d){
